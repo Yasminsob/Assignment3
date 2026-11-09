@@ -1,11 +1,60 @@
-// Import the necessary function from the React library
+import { useState } from "react";
 import { createRoot } from "react-dom/client";
+import { items, categories } from "./items.js";
+import "./style.css";
 
-// A "root" is the container for a React app. We need
-// a piece of HTML for the app to live in, so we use the
-// div from our index.html file
+function App() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [openItem, setOpenItem] = useState(null);
+
+  const visibleItems =
+    selectedCategory === "All"
+      ? items
+      : items.filter((item) => item.category === selectedCategory);
+
+  return (
+    <div>
+      <h1>Nothing for Sale</h1>
+
+      <div className="buttons">
+        <button
+          className={selectedCategory === "All" ? "active" : ""}
+          onClick={() => setSelectedCategory("All")}
+        >
+          All
+        </button>
+        {categories.map((category) => (
+          <button
+            key={category}
+            className={selectedCategory === category ? "active" : ""}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {openItem && (
+        <div className="detail">
+          <button onClick={() => setOpenItem(null)}>Close</button>
+          <img src={openItem.src} alt={openItem.title} />
+          <h2>{openItem.title}</h2>
+          <p>{openItem.category}</p>
+          <p>{openItem.description}</p>
+        </div>
+      )}
+
+      <div className="grid">
+        {visibleItems.map((item) => (
+          <div key={item.id} className="card" onClick={() => setOpenItem(item)}>
+            <img src={item.src} alt={item.title} />
+            <h3>{item.title}</h3>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 let root = createRoot(document.getElementById("app"));
-
-// This function tells React to render content in our application.
-// JSX allows us to use tags like these as a simple template language.
-root.render(<h1>Hello world!</h1>);
+root.render(<App />);
